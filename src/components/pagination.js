@@ -1,5 +1,3 @@
-// initPagination() — переключение страниц
-
 import { getPages } from "../lib/utils.js";
 
 export const initPagination = (
@@ -91,6 +89,7 @@ export const initPagination = (
 
     // переносим код, который делали под @todo: #2.4  — получить список видимых страниц и вывести их
     const visiblePages = getPages(page, pageCount, 5); // Получим массив страниц, которые нужно показать, выводим только 5 страниц
+
     pages.replaceChildren(
       ...visiblePages.map((pageNumber) => {
         // перебираем их и создаём для них кнопку

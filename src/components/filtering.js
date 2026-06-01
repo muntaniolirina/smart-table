@@ -1,9 +1,3 @@
-// initFiltering() — фильтрация
-
-// import { createComparison, defaultRules } from "../lib/compare.js"; // 6.2
-// @todo: #4.3 — настроить компаратор 6.2
-// const compare = createComparison(defaultRules);
-
 export function initFiltering(elements) {
   const updateIndexes = (elements, indexes) => {
     // 7ПР

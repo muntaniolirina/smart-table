@@ -1,34 +1,6 @@
-// initData() — функция инициализации данных
-import { makeIndex } from "./lib/utils.js";
-
 const BASE_URL = "https://webinars.webdev.education-services.ru/sp7-api";
 
 export function initData() {
-  // в 6.2 передается параметр sourceData
-  // КОД для 6.2 const sellers, const customers, const data
-
-  // const sellers = makeIndex(
-  //   sourceData.sellers,
-  //   "id",
-  //   (v) => `${v.first_name} ${v.last_name}`,
-  // );
-  // const customers = makeIndex(
-  //   sourceData.customers,
-  //   "id",
-  //   (v) => `${v.first_name} ${v.last_name}`,
-  // );
-  // const data = sourceData.purchase_records.map((item) => ({
-  //   id: item.receipt_id,
-  //   date: item.date,
-  //   seller: sellers[item.seller_id],
-  //   customer: customers[item.customer_id],
-  //   total: item.total_amount,
-  // }));
-
-  // return { sellers, customers, data }; -- ИЗ ПРОЕКТНОЙ 6.2
-  //////////////////////////////////////////
-  // КОД НИЖЕ ДЛЯ ПРОЕКТНОЙ 7
-
   // переменные для кеширования данных
   let sellers;
   let customers;
