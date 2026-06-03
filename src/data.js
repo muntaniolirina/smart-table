@@ -17,10 +17,10 @@ export function initData() {
       total: item.total_amount,
     }));
 
-  // функция получения индексов
+  // функция получения индексов с сервера (продавцы и покупатели)
   const getIndexes = async () => {
     if (!sellers || !customers) {
-      // если индексы ещё не установлены, то делаем запросы
+      // если индексы ещё не установлены, то делаем запросы параллельно через  Promise.all
       [sellers, customers] = await Promise.all([
         // запрашиваем и деструктурируем в уже объявленные ранее переменные
         fetch(`${BASE_URL}/sellers`).then((res) => res.json()), // запрашиваем продавцов
@@ -31,17 +31,17 @@ export function initData() {
     return { sellers, customers };
   };
 
-  // функция получения записей о продажах с сервера
+  // функция получения записей о продажах с сервера с учетом фильтров
   const getRecords = async (query, isUpdated = false) => {
     const qs = new URLSearchParams(query); // преобразуем объект параметров в SearchParams объект, представляющий query часть url
     const nextQuery = qs.toString(); // и приводим к строковому виду
 
     if (lastQuery === nextQuery && !isUpdated) {
       // isUpdated параметр нужен, чтобы иметь возможность делать запрос без кеша
-      return lastResult; // если параметры запроса не поменялись, то отдаём сохранённые ранее данные
+      return lastResult; // если параметры запроса (фильтры) не поменялись, то отдаём сохранённые ранее данные
     }
 
-    // если прошлый квери не был ранее установлен или поменялись параметры, то запрашиваем данные с сервера
+    // если прошлый квери не был ранее установлен или поменялись параметры(фильтры), то запрашиваем данные с сервера - асинхронно
     const response = await fetch(`${BASE_URL}/records?${nextQuery}`);
     const records = await response.json();
 

@@ -12,8 +12,7 @@ export function initTable(settings, onAction) {
   const root = cloneTemplate(tableTemplate);
 
   // @todo: #1.2 —  вывести дополнительные шаблоны до и после таблицы
-  [...before].reverse().forEach((subName) => {
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  before.reverse().forEach((subName) => {
     root[subName] = cloneTemplate(subName); // сохраняем клонированный объект в root
     root.container.prepend(root[subName].container); // добавляем контейнер к таблице
   });
@@ -27,7 +26,7 @@ export function initTable(settings, onAction) {
     onAction();
   });
   root.container.addEventListener("reset", (event) => {
-    setTimeout(onAction);
+    setTimeout(() => onAction(), 0);
   });
   root.container.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -40,18 +39,17 @@ export function initTable(settings, onAction) {
       const row = cloneTemplate(rowTemplate); //вернет объект с контейнером и элементами
 
       Object.keys(item).forEach((key) => {
-        if (row.elements[key]) {
-          // if (
-          //   row.elements[key].tagName.toLowerCase() === "input" ||
-          //   row.elements[key].tagName.toLowerCase() === "select"
-          // ) {
-          //   row.elements[key].value = item[key];
-          // } else {
-          //   row.elements[key].textContent = item[key];
-          // }
-          row.elements[key].textContent = item[key];
+        const el = row.elements[key];
+        // проверим существование элемента
+        if (!el) return;
+
+        if (["INPUT", "SELECT"].includes(el.tagName)) {
+          el.value = item[key];
+        } else {
+          el.textContent = item[key];
         }
       });
+
       return row.container;
     });
     root.elements.rows.replaceChildren(...nextRows);

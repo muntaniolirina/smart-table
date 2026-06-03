@@ -12,7 +12,7 @@ export function initSorting(columns) {
       field = action.dataset.field; // Информация о сортируемом поле есть также в кнопке
       order = action.dataset.value; // Направление заберём прямо из датасета для точности
 
-      // @todo: #3.2 — сбросить сортировки остальных колонок
+      // @todo: #3.2 — сбросить сортировки остальных колонок (стрелочки)
       columns.forEach((column) => {
         // Перебираем элементы (в columns у нас массив кнопок)
         if (column.dataset.field !== action.dataset.field) {
@@ -21,7 +21,7 @@ export function initSorting(columns) {
         }
       });
     } else {
-      // @todo: #3.3 — получить выбранный режим сортировки
+      // @todo: #3.3 — получить выбранный режим сортировки (текущий режим стрелочки)
       columns.forEach((column) => {
         // Перебираем все наши кнопки сортировки
         if (column.dataset.value !== "none") {
@@ -32,8 +32,10 @@ export function initSorting(columns) {
       });
     }
 
+    // Формируем параметр сортировки в виде "поле:направление" (пр: "date:asc")
     const sort = field && order !== "none" ? `${field}:${order}` : null; // сохраним в переменную параметр сортировки в виде field:direction
 
+    // Если сотировка активна - добавляем ее в query , если нет - возвращаем query без изменений
     return sort ? Object.assign({}, query, { sort }) : query; // по общему принципу, если есть сортировка, добавляем, если нет, то не трогаем query
   };
 }

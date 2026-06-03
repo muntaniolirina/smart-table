@@ -36,18 +36,17 @@ function collectState() {
  */
 async function render(action) {
   // для 7ПР делаем функцию ассинхронной
-  let state = collectState(); // состояние полей из таблицы
-
+  let state = collectState(); // состояние полей из таблицы (собирает текущее состояние)
   let query = {}; //  здесь будут формироваться параметры запроса 7ПР
 
   query = applySearching(query, state, action); // обновляем query 7ПР
   query = applyFiltering(query, state, action); // обновляем query 7ПР
   query = applySorting(query, state, action); // обновляем query 7ПР
-  query = applyPagination(query, state, action); // обновляем query 7ПР
+  query = applyPagination(query, state, action); // обновляем query 7ПР Применяем пагинацию ДО запроса к серверу
 
-  const { total, items } = await API.getRecords(query); // запрашиваем данные с собранными параметрами 7ПР
+  const { total, items } = await API.getRecords(query); // запрашиваем данные с собранными параметрами (передаем объект фильтров query) 7ПР
 
-  updatePagination(total, query); // перерисовываем пагинатор 7ПР
+  updatePagination(total, query); // перерисовываем пагинатор( кнопки страниц) после того как сервер вернул нам total
   sampleTable.render(items); // 7ПР
 }
 
@@ -55,14 +54,14 @@ const sampleTable = initTable(
   {
     tableTemplate: "table",
     rowTemplate: "row",
-    before: ["search", "header", "filter"], // !!!!! добавила search
+    before: ["search", "header", "filter"], // !!!!! добавила search перед header
     after: ["pagination"],
   },
   render,
 );
 
 // @todo: инициализация
-const applySearching = initSearching("search");
+const applySearching = initSearching("search"); // передаем только 1 аргумент - имя поля 'search'
 
 const { applyFiltering, updateIndexes } = initFiltering(
   sampleTable.filter.elements,
@@ -86,17 +85,17 @@ const { applyPagination, updatePagination } = initPagination(
     return el;
   },
 );
-
+// подключаем приложение к экрану
 const appRoot = document.querySelector("#app");
 appRoot.appendChild(sampleTable.container);
 
 // 7ПР
 async function init() {
-  const indexes = await API.getIndexes();
-
+  const indexes = await API.getIndexes(); // получаем индексы продавцов и покупателей с сервера
+  // передаем элементы формы и скачанных продавцов в функцию обновления
   updateIndexes(sampleTable.filter.elements, {
     searchBySeller: indexes.sellers,
   });
 }
 
-init().then(render); // 7ПР
+init().then(render); // 7ПР заменили старый вызов render() на цепочку с промисом

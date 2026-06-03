@@ -49,20 +49,21 @@ export const initPagination = (
   //   return data.slice(0, 10);
   //
   // НИЖЕ КОД ДЛЯ 7 проектной
-  let pageCount;
+  let pageCount; // переменная для хранения общего количества страниц между вызовами
 
+  // Функция для сбора параметров ДЛЯ сервера
   const applyPagination = (query, state, action) => {
     const limit = state.rowsPerPage;
     let page = state.page;
 
-    // переносим код, который делали под @todo: #2.6 — обработать действия
+    // переносим код, который делали под @todo: #2.6 — обработать действия кнопок
     if (action)
       switch (action.name) {
         case "prev":
           page = Math.max(1, page - 1);
           break; // переход на предыдущую страницу
         case "next":
-          page = Math.max(1, page + 1); // или ??? = Math.min(pageCount, page + 1);
+          page = Math.min(pageCount, page + 1);
           break; // переход на следующую страницу
         case "first":
           page = 1;
@@ -77,17 +78,19 @@ export const initPagination = (
           break; // переход на последнюю страницу
       }
 
+    // Добавляем лимит и страницу в объект запроса query, не изменяя старый объект
     return Object.assign({}, query, {
-      // добавим параметры к query, но не изменяем исходный объект
       limit,
       page,
     });
   };
 
+  // Функция перерисовки кнопок ПОСЛЕ ответа сервера
   const updatePagination = (total, { page, limit }) => {
+    // вычисляем количество страниц на основе общего числа строк от сервера
     pageCount = Math.ceil(total / limit);
 
-    // переносим код, который делали под @todo: #2.4  — получить список видимых страниц и вывести их
+    // переносим код, который делали под @todo: #2.4  — получить список видимых страниц и вывести их (вывод кнопок)
     const visiblePages = getPages(page, pageCount, 5); // Получим массив страниц, которые нужно показать, выводим только 5 страниц
 
     pages.replaceChildren(
@@ -97,13 +100,15 @@ export const initPagination = (
         return createPage(el, pageNumber, pageNumber === page); // вызываем колбэк из настроек, чтобы заполнить кнопку данными
       }),
     );
+
     // переносим код, который делали под @todo: #2.5 (обратите внимание, что rowsPerPage заменена на limit)
-    // @todo: #2.5 — обновить статус пагинации
+    // Обновляем статус пагинации
     fromRow.textContent = (page - 1) * limit + 1; // С какой строки выводим
     toRow.textContent = Math.min(page * limit, total); // заменила data.length на total
     totalRows.textContent = total; // заменила data.length на total
   };
 
+  // Возвращаем 2 функции вместо одной
   return {
     updatePagination,
     applyPagination,
